@@ -7,12 +7,6 @@ import (
 	kafka "github.com/segmentio/kafka-go"
 )
 
-const (
-	TopicAPIRequest     = "boarding.apirequest"
-	TopicBoardingConfig = "boarding.partner"
-	TopicMerchant       = "boarding.adminaction"
-)
-
 type (
 	Writer interface {
 		Topic() string

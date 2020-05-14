@@ -14,7 +14,7 @@ func TestCache(t *testing.T) {
 		"value": "bar",
 	}
 
-	c := cache.NewCache()
+	c := NewCache()
 	c.Save("foo", msg)
 	data, ok := c.Get("foo")
 	assert.True(ok)

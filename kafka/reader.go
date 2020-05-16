@@ -6,7 +6,7 @@ import (
 	"golang.org/x/net/context"
 )
 
-var _logger = logger.NewLogger()
+var _logger = logger.New()
 
 type (
 	Reader interface {

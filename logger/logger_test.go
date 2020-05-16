@@ -8,6 +8,8 @@ import (
 )
 
 func TestReadinessLogic(t *testing.T) {
-	logger := NewLogger()
-	assert.Equal(t, "*zap.SugaredLogger", fmt.Sprintf("%T", logger))
+	assert := assert.New(t)
+
+	assert.Equal("*zap.SugaredLogger", fmt.Sprintf("%T", New()))
+	assert.Equal("*zap.SugaredLogger", fmt.Sprintf("%T", New(Level("info"))))
 }

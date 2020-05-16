@@ -3,28 +3,68 @@ package logger
 import (
 	"os"
 
-	"github.com/caarlos0/env"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-// NewLogger creates zap sugared logger
-func NewLogger() *zap.SugaredLogger {
-	e := struct {
-		IsDev bool `env:"DEV_MODE" envDefault:"false"`
-	}{}
-	if err := env.Parse(&e); err != nil {
-		return nil
+// New zap sugared logger
+func New(setters ...Option) *zap.SugaredLogger {
+	// Default Options
+	args := &Options{
+		Level:   zap.ErrorLevel,
+		Encoder: zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig()),
+	}
+	for _, setter := range setters {
+		setter(args)
 	}
 
 	loggingLevel := zap.NewAtomicLevel()
-	if e.IsDev {
-		loggingLevel.SetLevel(zap.DebugLevel)
-	}
+	loggingLevel.SetLevel(args.Level)
 
 	return zap.New(zapcore.NewCore(
-		zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig()),
+		args.Encoder,
 		zapcore.Lock(os.Stdout),
 		loggingLevel,
 	)).Sugar()
+}
+
+type Options struct {
+	Level   zapcore.Level
+	Encoder zapcore.Encoder
+}
+
+type Option func(*Options)
+
+func Level(level string) Option {
+	return func(args *Options) {
+		var lv zapcore.Level
+		switch level {
+		case "panic":
+			lv = zap.PanicLevel
+		case "fatal":
+			lv = zap.FatalLevel
+		case "warn":
+			lv = zap.WarnLevel
+		case "info":
+			lv = zap.InfoLevel
+		case "debug":
+			lv = zap.DebugLevel
+		default:
+			lv = zap.ErrorLevel
+		}
+		args.Level = lv
+	}
+}
+
+func Encoder(format string) Option {
+	return func(args *Options) {
+		var enc zapcore.Encoder
+		switch format {
+		case "console":
+			enc = zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
+		default:
+			enc = zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())
+		}
+		args.Encoder = enc
+	}
 }

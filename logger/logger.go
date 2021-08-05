@@ -7,8 +7,8 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// New zap sugared logger
-func New(setters ...Option) *zap.SugaredLogger {
+// New zap logger
+func New(setters ...Option) *zap.Logger {
 	// Default Options
 	args := &Options{
 		Level:   zap.ErrorLevel,
@@ -25,7 +25,7 @@ func New(setters ...Option) *zap.SugaredLogger {
 		args.Encoder,
 		zapcore.Lock(os.Stdout),
 		loggingLevel,
-	)).Sugar()
+	))
 }
 
 type Options struct {
@@ -62,6 +62,7 @@ func Encoder(format string) Option {
 		switch format {
 		case "console":
 			enc = zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
+		case "json":
 		default:
 			enc = zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())
 		}

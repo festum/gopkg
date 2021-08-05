@@ -7,7 +7,7 @@ Logger leverages [uber/zap](https://github.com/uber-go/zap) for best performance
 Production JSON format in error level:
 
 ```go
-logger := logger.New(logger.Level("error"))
+logger := logger.New(logger.Level("error")).Sugar()
 defer logger.Sync()
 logger.Errorw("failed to fetch URL",
   // Structured context as loosely typed key-value pairs.
@@ -21,7 +21,7 @@ logger.Errorw("failed to fetch URL",
 Development console print format in debug level:
 
 ```go
-logger := logger.New(logger.Level("debug"), logger.Encoder("console"))
+logger := logger.New(logger.Level("debug"), logger.Encoder("console")).Sugar()
 defer logger.Sync()
 logger.Debugw("failed to fetch URL",
   // Structured context as loosely typed key-value pairs.
